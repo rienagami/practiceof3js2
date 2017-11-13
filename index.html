@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>初心者でもわかるThree.js!</title>
+</head>
+<body>
+
+<script src="js/three.min.js"></script>
+<script src="js/jquery-2.1.3.min.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script>
+   var main = function(){
+       //ここにコードを書いていく
+      
+//①シーンを作る。自分が作る３Dの世界。ただこの段階ではシーンの内容はからの状態
+var scene = new THREE.Scene();
+
+//②シーンの状態を撮影するカメラを作る。カメラに映った内容が最終的にブラウザー上で表示される。
+
+var width  = 600;
+var height = 400;
+var fov    = 60;   //画角
+var aspect = width / height;   //撮影結果の縦横比。アスペクト比。
+var near   = 1;  //ニアークリップの距離。nearより近い領域は表示されない。
+var far    = 1000;  //ファークリップ。farより遠い領域は表示されない。
+var camera = new THREE.PerspectiveCamera(fov, aspect, near, far );
+camera.position.set(0,0,50);
+       
+//cameraはカメラオブジェクト                          
+var controls = new THREE.OrbitControls(camera);
+
+//③レンダラーをDOM上に設置する
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( width, height);
+document.body.appendChild( renderer.domElement);
+
+       
+//④光源を追加する(今回は平行光源。これは２つの引数を渡す。第一引数は光の色。第二引数は光の強さ。)
+//平行光源は光の角度を変えられる。positionプロパティで決定する。
+//directionalLight.position.set(0,0.7,0.7);であれば上方向と手前方向、つまり斜め上前からの光となる。
+var directionalLight = new THREE.DirectionalLight(0x9f97ff);
+    directionalLight.position.set(0,0.7,0.7);
+    scene.add(directionalLight);
+
+       
+//⑤物体を追加する
+//今回は箱を追加。Three.jsではジオメトリー（形状）とマテリアル（表面素材）を用意した上でメッシュ（物体）を作成する手順が必要。
+//⑴ジオメトリーを作成。今回は箱。CubeGeometry(30,30,30); 横幅・高さ・奥行きの順で引数に渡す。
+var geometry = new THREE.CubeGeometry(30,30,30);
+//⑵マテリアルを作る。様々なマテリアルが用意されている。引数にはカラーテクスチャ、光沢などをオブジェクトで指定できる。今回は赤色のカラーのみを指定。
+var material = new THREE.MeshPhongMaterial({color:0xff0000});
+//⑶ジオメトリーとマテリアルからメッシュを作成する。
+var mesh     = new THREE.Mesh(geometry,material);
+//⑷メッシュをシーンに追加する。
+scene.add(mesh);
+
+//⑥表示する。
+//これでシーン、カメラ、レンダラーを用意してシーンの中には光源と物体がある状態。これをレンダリング（表示）する。レンダラーインスタンスはrenderというメソッドを持っていて、ここに任意のシーンをカメラを渡すことで該当のシーンをレンダリングする。
+//renderer.render(scene,camera);
+       
+//⑦回転アニメーション。箱を少しずつ回転させながら表示させる。
+//名前つきの即時実行関数を用意し、requestAnimationFrameで自分自身を呼び出し続ける事でレンダリングを繰り返すことができる。
+//関数内部ではmeshつまり箱のrotationプロパティの値を少しづつ変え
+//直後に表示させる。これでアニメーションとなる。
+//rotationプロパティはpositionプロパティと同じくsetメソッドで内容を変更できる。
+(function renderLoop(){
+    requestAnimationFrame( renderLoop );
+    mesh.rotation.set(
+    0,mesh.rotation.y + 0.01,
+    mesh.rotation.z + 0.01
+    );
+    
+//    controls.update();
+    
+    //①ズーム
+controls.userZoom = true;    //true:ズーム操作可能,false:ズーム操作不可
+controls.userZoomSpeed = 1.0;   // ズーム速度
+
+//②回転
+controls.userRotate = true;    //true:回転操作可能,false:回転操作不可
+controls.userRotateSpeed = 10;   //回転速度
+
+//③パン
+controls.userPan = true;     //true:パン操作可能,false:パン操作不可
+controls.userPanSpeed = 2.0;   //パン速度
+
+//④自動回転
+controls.autoRotate = false;     //true:自動回転する,false:自動回転しない
+controls.autoRotateSpeed = 1.0;    //自動回転する時の速度
+
+//⑤
+controls.minPolarAngle = 0; 
+controls.maxPolarAngle = Math.PI; 
+
+//⑥
+controls.minDistance = 0;   //近づける距離の最小値
+controls.maxDistance = Infinity;   //遠ざかれる距離の最大値
+    
+    
+    
+    
+    
+    
+    
+    renderer.render(scene,camera);   
+})();
+
+   };
+    
+    
+  window.addEventListener('DOMContentLoaded', main, false);
+</script>
+    
+</body>
+</html>
