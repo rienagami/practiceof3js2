@@ -54,6 +54,21 @@ var material = new THREE.MeshPhongMaterial({color:0xff0000});
 var mesh     = new THREE.Mesh(geometry,material);
 //⑷メッシュをシーンに追加する。
 scene.add(mesh);
+       
+       
+
+ // モデルの配置（球体）
+    var geometry = new THREE.SphereGeometry(20, 32, 16);
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xff0000,
+        ambient: 0xffffff,
+        specular: 0xcccccc,
+        shininess:100,
+        metal:false,
+        });
+    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x0099FF, wireframe: true, transparent: true } );
+    var mesh = new THREE.Mesh(geometry, wireframeMaterial);
+    scene.add(mesh);       
 
 //⑥表示する。
 //これでシーン、カメラ、レンダラーを用意してシーンの中には光源と物体がある状態。これをレンダリング（表示）する。レンダラーインスタンスはrenderというメソッドを持っていて、ここに任意のシーンをカメラを渡すことで該当のシーンをレンダリングする。
@@ -98,7 +113,12 @@ controls.minDistance = 0;   //近づける距離の最小値
 controls.maxDistance = Infinity;   //遠ざかれる距離の最大値
     
     
-    
+ //軸の表示（長さ：1000）   
+   var  axis = new THREE.AxisHelper(1000);          
+    //sceneに追加 
+     scene.add(axis);     
+    // 位置設定                             
+     axis.position.set(0,0,1);       
     
     
     
